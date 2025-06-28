@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Rutinas de Gym</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-4">🏋️ Organizador de Rutina de Gym</h1>
+
+        <!-- Botón para abrir el modal -->
+        <div class="text-center">
+            <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+                ➕ Agregar rutina
+            </button>
+        </div>
+
+        <!-- Tabla de rutinas -->
+        <div class="card">
+            <div class="card-header bg-secondary text-white">Rutinas programadas</div>
+            <div class="card-body">
+                {% if rutinas %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Día</th>
+                            <th>Ejercicio</th>
+                            <th>Series</th>
+                            <th>Repeticiones</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rutina in rutinas %}
+                        <tr>
+                            <td>{{ rutina.dia }}</td>
+                            <td>{{ rutina.ejercicio }}</td>
+                            <td>{{ rutina.series }}</td>
+                            <td>{{ rutina.repeticiones }}</td>
+                            <td>
+                                <form method="POST" action="/eliminar/{{ rutina.id }}" style="display:inline;">
+                                    <button class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">Aún no hay rutinas registradas.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar rutina -->
+    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="/agregar">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalAgregarLabel">Agregar nueva rutina</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="dia">Día</label>
+                            <select name="dia" class="form-select" required>
+                                <option value="">Seleccionar día</option>
+                                <option>Lunes</option>
+                                <option>Martes</option>
+                                <option>Miércoles</option>
+                                <option>Jueves</option>
+                                <option>Viernes</option>
+                                <option>Sábado</option>
+                                <option>Domingo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ejercicio">Ejercicio</label>
+                            <input type="text" class="form-control" name="ejercicio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="series">Series</label>
+                            <input type="number" class="form-control" name="series" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="repeticiones">Repeticiones</label>
+                            <input type="number" class="form-control" name="repeticiones" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (para que funcione el modal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

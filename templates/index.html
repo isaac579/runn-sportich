@@ -9,65 +9,67 @@
 <body class="bg-light">
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>🏋️ Rutinas de Gym</h1>
+            <h1 class="fs-4">🏋️ Rutinas de Gym</h1>
             <form action="/logout" method="GET">
-                <button class="btn btn-outline-danger">Cerrar sesión</button>
+                <button class="btn btn-outline-danger btn-sm">Cerrar sesión</button>
             </form>
         </div>
 
         <!-- Botón para abrir el modal -->
-        <div class="text-center">
-            <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+        <div class="text-center mb-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregar">
                 ➕ Agregar rutina
             </button>
         </div>
 
-        <!-- Tabla de rutinas -->
+        <!-- Tabla de rutinas responsiva -->
         <div class="card">
             <div class="card-header bg-secondary text-white">Rutinas programadas</div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if rutinas %}
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Día</th>
-                            <th>Ejercicio</th>
-                            <th>Series</th>
-                            <th>Repeticiones</th>
-                            <th>Grupo Muscular</th>
-                            <th>Dificultad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for rutina in rutinas %}
-                        <tr>
-                            <form method="POST" action="/editar/{{ rutina.id }}">
-                                <td><input class="form-control" type="text" name="dia" value="{{ rutina.dia }}"></td>
-                                <td><input class="form-control" type="text" name="ejercicio" value="{{ rutina.ejercicio }}"></td>
-                                <td><input class="form-control" type="number" name="series" value="{{ rutina.series }}"></td>
-                                <td><input class="form-control" type="number" name="repeticiones" value="{{ rutina.repeticiones }}"></td>
-                                <td><input class="form-control" type="text" name="grupo_muscular" value="{{ rutina.grupo_muscular }}"></td>
-                                <td>
-                                    <select class="form-select" name="dificultad">
-                                        <option {{ 'selected' if rutina.dificultad == 'Principiante' else '' }}>Principiante</option>
-                                        <option {{ 'selected' if rutina.dificultad == 'Intermedio' else '' }}>Intermedio</option>
-                                        <option {{ 'selected' if rutina.dificultad == 'Avanzado' else '' }}>Avanzado</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button class="btn btn-success btn-sm mb-1" type="submit">Guardar</button>
-                            </form>
-                            <form method="POST" action="/eliminar/{{ rutina.id }}">
-                                <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-                            </form>
-                                </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Día</th>
+                                <th>Ejercicio</th>
+                                <th>Series</th>
+                                <th>Repeticiones</th>
+                                <th>Grupo Muscular</th>
+                                <th>Dificultad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rutina in rutinas %}
+                            <tr>
+                                <form method="POST" action="/editar/{{ rutina.id }}">
+                                    <td><input class="form-control form-control-sm" type="text" name="dia" value="{{ rutina.dia }}"></td>
+                                    <td><input class="form-control form-control-sm" type="text" name="ejercicio" value="{{ rutina.ejercicio }}"></td>
+                                    <td><input class="form-control form-control-sm" type="number" name="series" value="{{ rutina.series }}"></td>
+                                    <td><input class="form-control form-control-sm" type="number" name="repeticiones" value="{{ rutina.repeticiones }}"></td>
+                                    <td><input class="form-control form-control-sm" type="text" name="grupo_muscular" value="{{ rutina.grupo_muscular }}"></td>
+                                    <td>
+                                        <select class="form-select form-select-sm" name="dificultad">
+                                            <option {{ 'selected' if rutina.dificultad == 'Principiante' else '' }}>Principiante</option>
+                                            <option {{ 'selected' if rutina.dificultad == 'Intermedio' else '' }}>Intermedio</option>
+                                            <option {{ 'selected' if rutina.dificultad == 'Avanzado' else '' }}>Avanzado</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <button class="btn btn-success btn-sm me-1" type="submit">Guardar</button>
+                                </form>
+                                <form method="POST" action="/eliminar/{{ rutina.id }}" style="display:inline;">
+                                    <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                                </form>
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% else %}
-                <p class="text-muted">Aún no hay rutinas registradas.</p>
+                <p class="text-muted p-3">Aún no hay rutinas registradas.</p>
                 {% endif %}
             </div>
         </div>
@@ -134,4 +136,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

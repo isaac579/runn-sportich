@@ -1,16 +1,19 @@
-<!--Producer by lowsnow-ICH-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Rutinas de Gym</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
     <div class="container py-5">
-        <h1 class="text-center mb-4">🏋️ Organizador de Rutina de Gym</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>🏋️ Rutinas de Gym</h1>
+            <form action="/logout" method="GET">
+                <button class="btn btn-outline-danger">Cerrar sesión</button>
+            </form>
+        </div>
 
         <!-- Botón para abrir el modal -->
         <div class="text-center">
@@ -31,21 +34,34 @@
                             <th>Ejercicio</th>
                             <th>Series</th>
                             <th>Repeticiones</th>
+                            <th>Grupo Muscular</th>
+                            <th>Dificultad</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for rutina in rutinas %}
                         <tr>
-                            <td>{{ rutina.dia }}</td>
-                            <td>{{ rutina.ejercicio }}</td>
-                            <td>{{ rutina.series }}</td>
-                            <td>{{ rutina.repeticiones }}</td>
-                            <td>
-                                <form method="POST" action="/eliminar/{{ rutina.id }}" style="display:inline;">
-                                    <button class="btn btn-danger btn-sm">Eliminar</button>
-                                </form>
-                            </td>
+                            <form method="POST" action="/editar/{{ rutina.id }}">
+                                <td><input class="form-control" type="text" name="dia" value="{{ rutina.dia }}"></td>
+                                <td><input class="form-control" type="text" name="ejercicio" value="{{ rutina.ejercicio }}"></td>
+                                <td><input class="form-control" type="number" name="series" value="{{ rutina.series }}"></td>
+                                <td><input class="form-control" type="number" name="repeticiones" value="{{ rutina.repeticiones }}"></td>
+                                <td><input class="form-control" type="text" name="grupo_muscular" value="{{ rutina.grupo_muscular }}"></td>
+                                <td>
+                                    <select class="form-select" name="dificultad">
+                                        <option {{ 'selected' if rutina.dificultad == 'Principiante' else '' }}>Principiante</option>
+                                        <option {{ 'selected' if rutina.dificultad == 'Intermedio' else '' }}>Intermedio</option>
+                                        <option {{ 'selected' if rutina.dificultad == 'Avanzado' else '' }}>Avanzado</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-success btn-sm mb-1" type="submit">Guardar</button>
+                            </form>
+                            <form method="POST" action="/eliminar/{{ rutina.id }}">
+                                <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                            </form>
+                                </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -68,7 +84,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="dia">Día</label>
+                            <label>Día</label>
                             <select name="dia" class="form-select" required>
                                 <option value="">Seleccionar día</option>
                                 <option>Lunes</option>
@@ -81,16 +97,28 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="ejercicio">Ejercicio</label>
+                            <label>Ejercicio</label>
                             <input type="text" class="form-control" name="ejercicio" required>
                         </div>
                         <div class="mb-3">
-                            <label for="series">Series</label>
+                            <label>Series</label>
                             <input type="number" class="form-control" name="series" required>
                         </div>
                         <div class="mb-3">
-                            <label for="repeticiones">Repeticiones</label>
+                            <label>Repeticiones</label>
                             <input type="number" class="form-control" name="repeticiones" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Grupo Muscular</label>
+                            <input type="text" class="form-control" name="grupo_muscular" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Dificultad</label>
+                            <select class="form-select" name="dificultad">
+                                <option>Principiante</option>
+                                <option>Intermedio</option>
+                                <option>Avanzado</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -102,7 +130,8 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS (para que funcione el modal) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from flask import flash
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rutinas.db'
@@ -63,9 +65,13 @@ def agregar():
 def eliminar(id):
     rutina = Rutina.query.get_or_404(id)
     if rutina.usuario_id != current_user.id:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': 'no autorizado'}), 403
         return redirect(url_for('index'))
     db.session.delete(rutina)
     db.session.commit()
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'status': 'eliminado'})
     return redirect(url_for('index'))
 
 @app.route('/editar/<int:id>', methods=['POST'])
@@ -76,39 +82,62 @@ def editar(id):
         return redirect(url_for('index'))
     rutina.dia = request.form['dia']
     rutina.ejercicio = request.form['ejercicio']
-    rutina.series = request.form['series']
-    rutina.repeticiones = request.form['repeticiones']
+    rutina.series = request.form.get('series', type=int)
+    rutina.repeticiones = request.form.get('repeticiones', type=int)
     rutina.grupo_muscular = request.form['grupo_muscular']
     rutina.dificultad = request.form['dificultad']
     db.session.commit()
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'status': 'ok'})
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = Usuario.query.filter_by(username=request.form['username']).first()
-        if user and user.password == request.form['password']:
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        user = Usuario.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
             login_user(user)
+            flash('Bienvenido de nuevo.', 'success')
             return redirect(url_for('index'))
+        flash('Usuario o contraseña incorrectos.', 'danger')
     return render_template('login.html')
+
+
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
+    flash('Sesión cerrada.', 'info')
     return redirect(url_for('login'))
+
+
 
 @app.route('/registrar', methods=['GET', 'POST'])
 def registrar():
     if request.method == 'POST':
+        username = request.form['username'].strip()
+        password = request.form['password']
+        if not username or not password:
+            flash('Usuario y contraseña son obligatorios.', 'warning')
+            return redirect(url_for('registrar'))
+
+        if Usuario.query.filter_by(username=username).first():
+            flash('El nombre de usuario ya existe.', 'warning')
+            return redirect(url_for('registrar'))
+
         nuevo_usuario = Usuario(
-            username=request.form['username'],
-            password=request.form['password']
+            username=username,
+            password=generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
         )
         db.session.add(nuevo_usuario)
         db.session.commit()
+        flash('Cuenta creada correctamente. Ahora puedes iniciar sesión.', 'success')
         return redirect(url_for('login'))
     return render_template('registrar.html')
+
 
 if __name__ == '__main__':
     with app.app_context():
